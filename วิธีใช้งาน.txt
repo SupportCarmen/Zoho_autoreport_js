@@ -1,0 +1,21 @@
+วิธีติดตั้งครับ:
+1. Node.js ถ้ามีไม่ต้องโหลด
+    ดาวน์โหลดที่ https://nodejs.org
+2. ลง npm packages (รันแค่คำสั่งเดียว)
+    - npm install
+3. ลง Playwright browser
+    - npx playwright install chromium
+4. Microsoft Excel
+ต้องติดตั้งอยู่ในเครื่องด้วยครับ เพราะ VBScript ใช้ Excel จริงในการสร้าง PivotTable
+5. ไฟล์ .env ถ้าไม่มีต้องสร้าง 
+สร้างไฟล์ .env ใหม่ในเครื่องนั้น:
+ZOHO_EMAIL=your_email
+ZOHO_PASSWORD=your_password
+
+สรุปขั้นตอนครับ:
+1. ติดตั้ง Node.js
+2. copy โฟลเดอร์ project ไปเครื่องใหม่
+3. npm install
+4. npx playwright install chromium
+5. สร้างไฟล์ .env
+6. npm start
