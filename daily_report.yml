@@ -1,0 +1,33 @@
+name: Zoho Daily Report
+
+on:
+  schedule:
+    # ตั้งเวลาให้รัน (UTC) 11:00 UTC คือ 18:00 ไทย
+    - cron: '0 11 * * *'
+  workflow_dispatch: # กดรันเองได้ด้วยมือ
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright Browsers
+        run: npx playwright install chromium
+
+      - name: Run Reporter
+        env:
+          ZOHO_EMAIL: ${{ secrets.ZOHO_EMAIL }}
+          ZOHO_PASSWORD: ${{ secrets.ZOHO_PASSWORD }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: node index_simple.js
