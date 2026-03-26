@@ -5,7 +5,7 @@ const os = require('os');
 const BASE = path.join(os.homedir(), 'Downloads');
 
 module.exports = {
-  WEBHOOK: "https://discord.com/api/webhooks/1481488917885882531/rmOpalv6_dE9_dYoUYY1x3DPaShVDvGXuKVzh5IFsrmLlR_4eBUOjj6cIU2XCw5fx4im",
+  WEBHOOK: "",
   ZOHO_EMAIL: process.env.ZOHO_EMAIL,
   ZOHO_PASSWORD: process.env.ZOHO_PASSWORD,
   DASHBOARD_URL: "https://desk.zoho.com/agent/carmensoftware/carmen-software-support/dashboards/details/483929000025299144",
