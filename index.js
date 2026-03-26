@@ -29,7 +29,7 @@ function isTodaySession() {
     .replace(/:/g, '-');
 
   console.log("🔐 ตรวจสอบ session...");
-  const browser = await chromium.launch({ headless: false });
+  const browser = await chromium.launch({ headless: true});
   let context;
 
   if (isTodaySession()) {
@@ -110,7 +110,7 @@ function isTodaySession() {
   await updateMaster(reportEntries, masterFile);
 
   console.log("\n📤 ส่งไฟล์ไป Discord...");
-  await sendToDiscord([...images, masterFile], now);
+  await sendToDiscord(images, now);
   console.log("✅ ส่ง Discord สำเร็จ");
 
   console.log("\n🎉 เสร็จสิ้นทุกขั้นตอน");

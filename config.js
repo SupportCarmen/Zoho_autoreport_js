@@ -1,24 +1,13 @@
 require('dotenv').config();
 const path = require('path');
-const os = require('os');
-
-const BASE = path.join(os.homedir(), 'Downloads');
 
 module.exports = {
-  WEBHOOK: "",
+  // รับค่าจาก Environment
+  WEBHOOK: process.env.DISCORD_WEBHOOK,
   ZOHO_EMAIL: process.env.ZOHO_EMAIL,
   ZOHO_PASSWORD: process.env.ZOHO_PASSWORD,
   DASHBOARD_URL: "https://desk.zoho.com/agent/carmensoftware/carmen-software-support/dashboards/details/483929000025299144",
-  FOLDER: path.join(BASE, 'captureReport'),
-  REPORT_FOLDER: path.join(BASE, 'report'),
-  REPORTS: [
-    {
-      url: "https://desk.zoho.com/supportapi/api/v1/reports/483929000037008035/export?orgId=710033074&includeDetails=true&from=0&limit=2000&format=xls",
-      name: "OpenAll"
-    },
-    {
-      url: "https://desk.zoho.com/supportapi/api/v1/reports/483929000029190842/export?orgId=710033074&includeDetails=true&from=0&limit=2000&format=xls",
-      name: "TicketToday"
-    }
-  ]
+  // เปลี่ยน Folder มาไว้ในโปรเจกต์เพื่อให้ GitHub Actions จัดการง่าย
+  FOLDER: path.join(__dirname, 'screenshots'),
+  REPORTS: [] // ตัดออกเพราะไม่ใช้ส่วนของ Excel ใน GitHub Actions
 };
