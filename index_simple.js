@@ -42,14 +42,19 @@ const { sendToDiscord } = require('./discord');
     if (hasSession) {
       // ===== โหมด Session: ไปที่ Dashboard ตรงๆ =====
       console.log("📊 Opening Dashboard directly (using session)...");
+      console.log("🔍 Debug: Dashboard URL =", DASHBOARD_URL);
       await page.goto(DASHBOARD_URL, { waitUntil: 'networkidle', timeout: 60000 });
       await page.waitForTimeout(5000);
 
       // ตรวจสอบว่า Session หมดอายุหรือไม่
-      if (page.url().includes('accounts.zoho.com')) {
+      const currentUrl = page.url();
+      console.log("🔍 Debug: Current URL after navigation =", currentUrl);
+
+      if (currentUrl.includes('accounts.zoho.com')) {
         console.log("❌ Session หมดอายุ! กรุณาสร้าง session.json ใหม่ที่เครื่อง Local");
         console.log("   รัน: node generate_session.js");
         console.log("   แล้วอัพเดต GitHub Secret: ZOHO_SESSION_BASE64");
+        console.log("🔍 Debug: Redirected URL =", currentUrl);
 
         // ถ่ายภาพหน้าจอ debug ส่งไป Discord เพื่อแจ้งเตือน
         const debugExpired = path.join(FOLDER, `debug_session_expired_${now}.png`);
