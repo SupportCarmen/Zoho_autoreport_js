@@ -28,8 +28,15 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Restore Zoho Session
-        if: ${{ secrets.ZOHO_SESSION_BASE64 != '' }}
-        run: echo "${{ secrets.ZOHO_SESSION_BASE64 }}" | base64 -d > session.json
+        env:
+          ZOHO_SESSION: ${{ secrets.ZOHO_SESSION_BASE64 }}
+        run: |
+          if [ -n "$ZOHO_SESSION" ]; then
+            echo "$ZOHO_SESSION" | base64 -d > session.json
+            echo "✅ session.json restored"
+          else
+            echo "⚠️ No ZOHO_SESSION_BASE64 secret found, skipping"
+          fi
 
       - name: Run Reporter
         env:
