@@ -34,6 +34,8 @@ jobs:
           if [ -n "$ZOHO_SESSION" ]; then
             echo "$ZOHO_SESSION" | base64 -d > session.json
             echo "✅ session.json restored"
+            echo "📏 File size: $(wc -c < session.json) bytes"
+            echo "🍪 Cookies count: $(cat session.json | python3 -c 'import json,sys; d=json.load(sys.stdin); print(len(d.get("cookies",[])))' 2>/dev/null || echo 'INVALID JSON!')"
           else
             echo "⚠️ No ZOHO_SESSION_BASE64 secret found, skipping"
           fi
