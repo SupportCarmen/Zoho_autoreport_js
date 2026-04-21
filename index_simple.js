@@ -5,45 +5,104 @@ const { ZOHO_EMAIL, ZOHO_PASSWORD, DASHBOARD_URL, FOLDER } = require('./config')
 const { sendToDiscord } = require('./discord');
 
 (async () => {
-  if (!fs.existsSync(FOLDER)) fs.mkdirSync(FOLDER, { recursive: true });
+  let browser;
+  try {
+    // ตรวจสอบ Environment Variables
+    console.log("🔍 Checking environment variables...");
+    console.log(`  ZOHO_EMAIL: ${ZOHO_EMAIL ? '✅ SET' : '❌ MISSING'}`);
+    console.log(`  ZOHO_PASSWORD: ${ZOHO_PASSWORD ? '✅ SET' : '❌ MISSING'}`);
 
-  const now = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Bangkok' }).replace(' ', '_').replace(/:/g, '-');
+    if (!ZOHO_EMAIL || !ZOHO_PASSWORD) {
+      throw new Error("❌ ZOHO_EMAIL or ZOHO_PASSWORD is not set! Please check GitHub Secrets.");
+    }
 
-  console.log("🚀 Starting Playwright...");
-  const browser = await chromium.launch({ headless: true }); // ต้องเป็น true บน GitHub
-  const context = await browser.newContext({
-    viewport: { width: 1920, height: 1080 }
-  });
+    if (!fs.existsSync(FOLDER)) fs.mkdirSync(FOLDER, { recursive: true });
 
-  const page = await context.newPage();
+    const now = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Bangkok' }).replace(' ', '_').replace(/:/g, '-');
 
-  // Login Logic
-  console.log("🔑 Logging in...");
-  await page.goto("https://accounts.zoho.com/signin");
-  await page.fill('#login_id', ZOHO_EMAIL);
-  await page.click('#nextbtn');
-  await page.fill('#password', ZOHO_PASSWORD);
-  await page.click('#nextbtn');
-  await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(5000); // รอ Zoho จัดการ session
+    console.log("🚀 Starting Playwright...");
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({
+      viewport: { width: 1920, height: 1080 }
+    });
 
-  console.log("📊 Opening Dashboard...");
-  await page.goto(DASHBOARD_URL, { waitUntil: 'networkidle', timeout: 60000 });
-  await page.waitForTimeout(10000); // รอ Dashboard โหลดกราฟให้เสร็จ
+    const page = await context.newPage();
 
-  // Capture
-  console.log("📸 Capturing...");
-  const images = [];
-  const selector = '.zd_v2-dashboarddetailcontainer-container';
+    // ===== Login =====
+    console.log("🔑 Logging in...");
+    await page.goto("https://accounts.zoho.com/signin", { timeout: 60000 });
+    await page.waitForTimeout(3000);
 
-  // แคปจอแบบง่าย (1 หรือ 2 รูปตามส่วนสำคัญ)
-  const file = path.join(FOLDER, `dashboard_${now}.png`);
-  await page.locator(selector).screenshot({ path: file });
-  images.push(file);
+    // กรอก Email
+    console.log("📧 Entering email...");
+    await page.fill('#login_id', ZOHO_EMAIL);
+    await page.click('#nextbtn');
+    await page.waitForTimeout(3000);
 
-  console.log("📤 Sending to Discord...");
-  await sendToDiscord(images, now);
+    // กรอก Password
+    console.log("🔐 Entering password...");
+    await page.waitForSelector('#password', { timeout: 20000 });
+    await page.fill('#password', ZOHO_PASSWORD);
+    await page.click('#nextbtn');
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(6000);
 
-  await browser.close();
-  console.log("🎉 Done!");
+    // Debug: ถ่ายภาพหน้าจอหลัง Login
+    const debugLogin = path.join(FOLDER, `debug_after_login_${now}.png`);
+    await page.screenshot({ path: debugLogin, fullPage: true });
+    console.log("🔍 Debug: saved after-login screenshot");
+    console.log("🔍 Debug: current URL =", page.url());
+
+    // เช็คว่า Login สำเร็จหรือไม่
+    if (page.url().includes('accounts.zoho.com')) {
+      console.log("⚠️ ยังอยู่หน้า Login — อาจต้องใส่ OTP หรือ Password ผิด");
+      console.log("🔍 Debug: Page title =", await page.title());
+      await sendToDiscord([debugLogin], now);
+      await browser.close();
+      process.exit(1);
+    }
+
+    // ===== เปิด Dashboard =====
+    console.log("📊 Opening Dashboard...");
+    await page.goto(DASHBOARD_URL, { waitUntil: 'networkidle', timeout: 60000 });
+    await page.waitForTimeout(15000); // รอ Dashboard โหลดกราฟให้เสร็จ
+
+    // Debug: ถ่ายภาพหน้าจอ Dashboard
+    const debugDash = path.join(FOLDER, `debug_dashboard_${now}.png`);
+    await page.screenshot({ path: debugDash, fullPage: true });
+    console.log("🔍 Debug: saved dashboard screenshot");
+    console.log("🔍 Debug: current URL =", page.url());
+
+    // ===== Capture =====
+    console.log("📸 Capturing...");
+    const images = [];
+    const selector = '.zd_v2-dashboarddetailcontainer-container';
+
+    const found = await page.locator(selector).count();
+    console.log(`🔍 Debug: selector '${selector}' found = ${found}`);
+
+    if (found > 0) {
+      const file = path.join(FOLDER, `dashboard_${now}.png`);
+      await page.locator(selector).screenshot({ path: file });
+      images.push(file);
+    } else {
+      // Fallback: ถ่ายเต็มหน้าจอแทน
+      console.log("⚠️ Selector not found, using full page screenshot...");
+      const file = path.join(FOLDER, `dashboard_full_${now}.png`);
+      await page.screenshot({ path: file, fullPage: true });
+      images.push(file);
+    }
+
+    // ===== ส่ง Discord =====
+    console.log("📤 Sending to Discord...");
+    await sendToDiscord([debugLogin, debugDash, ...images], now);
+
+    await browser.close();
+    console.log("🎉 Done!");
+  } catch (error) {
+    console.error("❌ Fatal Error:", error.message);
+    console.error(error.stack);
+    if (browser) await browser.close();
+    process.exit(1);
+  }
 })();
