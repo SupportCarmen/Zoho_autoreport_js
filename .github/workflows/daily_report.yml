@@ -1,6 +1,9 @@
 name: Zoho Daily Report
 
 on:
+  push:
+    branches:
+      - dev
   schedule:
     # ตั้งเวลาให้รัน (UTC) 11:00 UTC คือ 18:00 ไทย
     - cron: '0 11 * * *'
