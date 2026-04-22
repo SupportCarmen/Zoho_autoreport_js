@@ -153,7 +153,7 @@ function loadSessionState() {
     const images = [];
     const scrollSteps = [0, 300, 400, 1200];
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 2; i++) {
       if (scrollSteps[i] > 0) {
         await page.mouse.wheel(0, scrollSteps[i]);
         await page.waitForTimeout(2000);
@@ -161,7 +161,7 @@ function loadSessionState() {
       const file = path.join(FOLDER, `${now}_dashboard_${i + 1}.png`);
       await page.locator(selector).screenshot({ path: file });
       images.push(file);
-      console.log(`✅ capture ${i + 1}/4`);
+      console.log(`✅ capture ${i + 1}/2`);
     }
 
     console.log("📤 Sending to Discord...");
