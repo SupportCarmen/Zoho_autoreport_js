@@ -143,21 +143,19 @@ function loadSessionState() {
     console.log("🔍 Debug: current URL =", page.url());
 
     console.log("📸 Capturing...");
-    const images = [];
     const selector = ".zd_v2-dashboarddetailcontainer-container";
+    const images = [];
+    const scrollSteps = [0, 300, 400, 1200];
 
-    const found = await page.locator(selector).count();
-    console.log(`🔍 Debug: selector '${selector}' found = ${found}`);
-
-    if (found > 0) {
-      const file = path.join(FOLDER, `dashboard_${now}.png`);
+    for (let i = 0; i < 4; i++) {
+      if (scrollSteps[i] > 0) {
+        await page.mouse.wheel(0, scrollSteps[i]);
+        await page.waitForTimeout(2000);
+      }
+      const file = path.join(FOLDER, `${now}_dashboard_${i + 1}.png`);
       await page.locator(selector).screenshot({ path: file });
       images.push(file);
-    } else {
-      console.log("⚠️ Selector not found, using full page screenshot...");
-      const file = path.join(FOLDER, `dashboard_full_${now}.png`);
-      await page.screenshot({ path: file, fullPage: true });
-      images.push(file);
+      console.log(`✅ capture ${i + 1}/4`);
     }
 
     console.log("📤 Sending to Discord...");
