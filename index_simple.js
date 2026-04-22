@@ -151,7 +151,7 @@ function loadSessionState() {
     console.log("\n📸 เริ่ม capture dashboard...");
     const selector = ".zd_v2-dashboarddetailcontainer-container";
     const images = [];
-    const scrollSteps = [0, 300, 400, 1200];
+    const scrollSteps = [0, 1200];
 
     for (let i = 0; i < 2; i++) {
       if (scrollSteps[i] > 0) {
