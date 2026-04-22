@@ -23,13 +23,28 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Cache Playwright Browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
+        run: |
+          if [ -d "$HOME/.cache/ms-playwright" ] && [ "$(ls -A $HOME/.cache/ms-playwright)" ]; then
+            echo "✅ Browsers cached, skipping deps install"
+            npx playwright install chromium
+          else
+            echo "⬇️ No cache, installing browsers with deps..."
+            npx playwright install --with-deps chromium
+          fi
 
       - name: Install xvfb
-        run: sudo apt-get update && sudo apt-get install -y xvfb
+        run: sudo apt-get install -y xvfb
 
       - name: Decode Zoho Session
         run: |

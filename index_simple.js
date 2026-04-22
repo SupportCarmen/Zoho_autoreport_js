@@ -145,15 +145,15 @@ function loadSessionState() {
 
     // ===== ปิด popup / notification / modal ก่อน capture =====
     try {
-      const notNow = page.locator('text=Not Now');
-      if (await notNow.count() > 0) {
+      const notNow = page.locator("text=Not Now");
+      if ((await notNow.count()) > 0) {
         await notNow.click();
         await page.waitForTimeout(500);
       }
     } catch (e) {}
 
     try {
-      await page.keyboard.press('Escape');
+      await page.keyboard.press("Escape");
       await page.waitForTimeout(500);
     } catch (e) {}
 
@@ -162,43 +162,20 @@ function loadSessionState() {
       await page.waitForTimeout(300);
     } catch (e) {}
 
-    console.log("📸 Capturing...");
-    const images = [];
-
-    // ถ่าย full page รูปเดียว (ครบทั้งหน้า)
-    const fullPageFile = path.join(FOLDER, `dashboard_full_${now}.png`);
-    await page.screenshot({ path: fullPageFile, fullPage: true });
-    images.push(fullPageFile);
-    console.log("✅ full page capture done");
-
-    // เลื่อนลง + ถ่าย viewport ทีละช่วง (รูปไม่ซ้ำกัน)
+    console.log("\n📸 เริ่ม capture dashboard...");
     const selector = ".zd_v2-dashboarddetailcontainer-container";
-    const dashboard = page.locator(selector);
-    const scrollPositions = [0, 900, 1800, 2700];
+    const images = [];
+    const scrollSteps = [0, 300, 400, 1200];
 
-    for (let i = 0; i < scrollPositions.length; i++) {
-      const targetY = scrollPositions[i];
-
-      // Scroll ที่ตัว dashboard container โดยตรง
-      await dashboard.evaluate((el, pos) => {
-        el.scrollTop = pos;
-        // ถ้าตัวเองไม่มี scrollbar ลอง scroll parent ใกล้เคียง
-        let p = el.parentElement;
-        while (p) {
-          p.scrollTop = pos;
-          p = p.parentElement;
-        }
-      }, targetY);
-
-      await page.waitForTimeout(2000);
-
-      const finalY = await dashboard.evaluate((el) => el.scrollTop);
-      console.log(`🔍 Scroll target: ${targetY}, container scrollTop: ${finalY}`);
-
-      const file = path.join(FOLDER, `dashboard_scroll_${i + 1}_${now}.png`);
-      await page.screenshot({ path: file, fullPage: false });
+    for (let i = 0; i < 4; i++) {
+      if (scrollSteps[i] > 0) {
+        await page.mouse.wheel(0, scrollSteps[i]);
+        await page.waitForTimeout(2000);
+      }
+      const file = path.join(FOLDER, `${now}_dashboard_${i + 1}.png`);
+      await page.locator(selector).screenshot({ path: file });
       images.push(file);
-      console.log(`✅ capture ${i + 1}/${scrollPositions.length}`);
+      console.log(`✅ capture ${i + 1}/4`);
     }
 
     console.log("📤 Sending to Discord...");
@@ -209,11 +186,16 @@ function loadSessionState() {
   } catch (error) {
     // Sanitize error output to avoid leaking secrets in logs
     let safeMessage = error.message || String(error);
-    if (WEBHOOK) safeMessage = safeMessage.replaceAll(WEBHOOK, '[REDACTED_WEBHOOK]');
-    if (ZOHO_PASSWORD) safeMessage = safeMessage.replaceAll(ZOHO_PASSWORD, '[REDACTED_PASSWORD]');
+    if (WEBHOOK)
+      safeMessage = safeMessage.replaceAll(WEBHOOK, "[REDACTED_WEBHOOK]");
+    if (ZOHO_PASSWORD)
+      safeMessage = safeMessage.replaceAll(
+        ZOHO_PASSWORD,
+        "[REDACTED_PASSWORD]",
+      );
 
     console.error("❌ Fatal Error:", safeMessage);
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       console.error(error.stack);
     }
     if (browser) await browser.close();
