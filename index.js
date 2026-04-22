@@ -29,7 +29,7 @@ function isTodaySession() {
     .replace(/:/g, '-');
 
   console.log("🔐 ตรวจสอบ session...");
-  const browser = await chromium.launch({ headless: true});
+  const browser = await chromium.launch({ headless: false});
   let context;
 
   if (isTodaySession()) {

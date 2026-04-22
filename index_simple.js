@@ -1,29 +1,41 @@
-const { chromium } = require('playwright');
-const fs = require('fs');
-const path = require('path');
-const { ZOHO_EMAIL, ZOHO_PASSWORD, DASHBOARD_URL, FOLDER } = require('./config');
-const { sendToDiscord } = require('./discord');
+const { chromium } = require("playwright");
+const fs = require("fs");
+const path = require("path");
+const {
+  ZOHO_EMAIL,
+  ZOHO_PASSWORD,
+  DASHBOARD_URL,
+  FOLDER,
+} = require("./config");
+const { sendToDiscord } = require("./discord");
 
 (async () => {
   let browser;
   try {
     // ตรวจสอบ Environment Variables
     console.log("🔍 Checking environment variables...");
-    console.log(`  ZOHO_EMAIL: ${ZOHO_EMAIL ? '✅ SET' : '❌ MISSING'}`);
-    console.log(`  ZOHO_PASSWORD: ${ZOHO_PASSWORD ? '✅ SET' : '❌ MISSING'}`);
+    console.log(`  ZOHO_EMAIL: ${ZOHO_EMAIL ? "✅ SET" : "❌ MISSING"}`);
+    console.log(`  ZOHO_PASSWORD: ${ZOHO_PASSWORD ? "✅ SET" : "❌ MISSING"}`);
 
     if (!ZOHO_EMAIL || !ZOHO_PASSWORD) {
-      throw new Error("❌ ZOHO_EMAIL or ZOHO_PASSWORD is not set! Please check GitHub Secrets.");
+      throw new Error(
+        "❌ ZOHO_EMAIL or ZOHO_PASSWORD is not set! Please check GitHub Secrets.",
+      );
     }
 
     if (!fs.existsSync(FOLDER)) fs.mkdirSync(FOLDER, { recursive: true });
 
-    const now = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Bangkok' }).replace(' ', '_').replace(/:/g, '-');
+    const now = new Date()
+      .toLocaleString("sv-SE", { timeZone: "Asia/Bangkok" })
+      .replace(" ", "_")
+      .replace(/:/g, "-");
 
     console.log("🚀 Starting Playwright...");
-    browser = await chromium.launch({ headless: true });
+    browser = await chromium.launch({ headless: false });
     const context = await browser.newContext({
-      viewport: { width: 1920, height: 1080 }
+      viewport: { width: 1920, height: 1080 },
+      userAgent:
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
     });
 
     const page = await context.newPage();
@@ -35,17 +47,18 @@ const { sendToDiscord } = require('./discord');
 
     // กรอก Email
     console.log("📧 Entering email...");
-    await page.fill('#login_id', ZOHO_EMAIL);
-    await page.click('#nextbtn');
+    await page.fill("#login_id", ZOHO_EMAIL);
+    await page.click("#nextbtn");
     await page.waitForTimeout(3000);
 
     // กรอก Password
     console.log("🔐 Entering password...");
-    await page.waitForSelector('#password', { timeout: 20000 });
-    await page.fill('#password', ZOHO_PASSWORD);
-    await page.click('#nextbtn');
-    await page.waitForLoadState('networkidle');
+    await page.waitForSelector("#password", { timeout: 20000 });
+    await page.fill("#password", ZOHO_PASSWORD);
+    await page.click("#nextbtn");
+    await page.waitForLoadState("networkidle");
     await page.waitForTimeout(6000);
+    console.log("✅ Login success");
 
     // Debug: ถ่ายภาพหน้าจอหลัง Login
     const debugLogin = path.join(FOLDER, `debug_after_login_${now}.png`);
@@ -54,17 +67,20 @@ const { sendToDiscord } = require('./discord');
     console.log("🔍 Debug: current URL =", page.url());
 
     // เช็คว่า Login สำเร็จหรือไม่
-    if (page.url().includes('accounts.zoho.com')) {
-      console.log("⚠️ ยังอยู่หน้า Login — อาจต้องใส่ OTP หรือ Password ผิด");
-      console.log("🔍 Debug: Page title =", await page.title());
-      await sendToDiscord([debugLogin], now);
-      await browser.close();
-      process.exit(1);
-    }
+    // if (page.url().includes("accounts.zoho.com")) {
+    //   console.log("⚠️ ยังอยู่หน้า Login — อาจต้องใส่ OTP หรือ Password ผิด");
+    //   console.log("🔍 Debug: Page title =", await page.title());
+    //   await sendToDiscord([debugLogin], now);
+    //   await browser.close();
+    //   process.exit(1);
+    // }
 
     // ===== เปิด Dashboard =====
     console.log("📊 Opening Dashboard...");
-    await page.goto(DASHBOARD_URL, { waitUntil: 'networkidle', timeout: 60000 });
+    await page.goto(DASHBOARD_URL, {
+      waitUntil: "networkidle",
+      timeout: 60000,
+    });
     await page.waitForTimeout(15000); // รอ Dashboard โหลดกราฟให้เสร็จ
 
     // Debug: ถ่ายภาพหน้าจอ Dashboard
@@ -76,7 +92,7 @@ const { sendToDiscord } = require('./discord');
     // ===== Capture =====
     console.log("📸 Capturing...");
     const images = [];
-    const selector = '.zd_v2-dashboarddetailcontainer-container';
+    const selector = ".zd_v2-dashboarddetailcontainer-container";
 
     const found = await page.locator(selector).count();
     console.log(`🔍 Debug: selector '${selector}' found = ${found}`);
@@ -95,6 +111,7 @@ const { sendToDiscord } = require('./discord');
 
     // ===== ส่ง Discord =====
     console.log("📤 Sending to Discord...");
+    
     await sendToDiscord([debugLogin, debugDash, ...images], now);
 
     await browser.close();

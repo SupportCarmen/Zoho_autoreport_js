@@ -9,5 +9,6 @@ module.exports = {
   DASHBOARD_URL: "https://desk.zoho.com/agent/carmensoftware/carmen-software-support/dashboards/details/483929000025299144",
   // เปลี่ยน Folder มาไว้ในโปรเจกต์เพื่อให้ GitHub Actions จัดการง่าย
   FOLDER: path.join(__dirname, 'screenshots'),
+  REPORT_FOLDER: path.join(__dirname, 'reports'),
   REPORTS: [] // ตัดออกเพราะไม่ใช้ส่วนของ Excel ใน GitHub Actions
 };
