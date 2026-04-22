@@ -58,7 +58,7 @@ function isTodaySession() {
     fs.writeFileSync(SESSION_FILE, JSON.stringify({
       date: new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Bangkok' }),
       state
-    }));
+    }), { mode: 0o600 }); // Restrict to owner-only read/write
     console.log("✅ Session saved");
     await loginPage.close();
   }

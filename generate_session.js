@@ -54,6 +54,7 @@ const { DASHBOARD_URL } = require('./config');
 
   // บันทึก Storage State
   await context.storageState({ path: 'session.json' });
+  fs.chmodSync('session.json', 0o600); // Restrict to owner-only
   console.log('💾 บันทึก session.json สำเร็จ!');
   console.log('');
   console.log('📋 ขั้นตอนถัดไป:');

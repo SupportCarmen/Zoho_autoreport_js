@@ -143,3 +143,8 @@ temp/
 test-results/
 playwright-report/
 playwright/.cache/
+
+# Sensitive runtime data
+session.json
+screenshots/
+reports/

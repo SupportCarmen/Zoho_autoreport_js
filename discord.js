@@ -17,8 +17,15 @@ async function sendToDiscord(files, now) {
     form.append(`file${i}`, fs.createReadStream(file));
   });
 
-  await axios.post(WEBHOOK, form, { headers: form.getHeaders() });
-  console.log("Sent to Discord");
+  try {
+    await axios.post(WEBHOOK, form, { headers: form.getHeaders() });
+    console.log("Sent to Discord");
+  } catch (error) {
+    // Mask webhook URL to prevent leaking it in logs
+    const safeMessage = error.message?.replace(WEBHOOK, '[REDACTED_WEBHOOK]') || error.message;
+    console.error('❌ Failed to send Discord:', safeMessage);
+    throw new Error('Discord webhook failed: ' + safeMessage);
+  }
 }
 
 module.exports = { sendToDiscord };
