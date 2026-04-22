@@ -1,1 +1,205 @@
-{"date":"2026-03-26","state":{"cookies":[{"name":"_zxor","value":"\"https://accounts.zoho.com\"","domain":"accounts.zoho.com","path":"/wms","expires":-1,"httpOnly":false,"secure":true,"sameSite":"None"},{"name":"zmuac","value":"NzE3MzU0MzgyXzI0NjExMjY=","domain":"mail.zoho.com","path":"/biz","expires":1777105495.144299,"httpOnly":true,"secure":true,"sameSite":"Strict"},{"name":"zmcdn","value":"NTguMTM2LjI1MC40Mjo6VEg=","domain":"mail.zoho.com","path":"/biz","expires":1774599895.144364,"httpOnly":true,"secure":true,"sameSite":"Lax"},{"name":"zalb_e188bc05fe","value":"8ce881a5e14f2ce27e2c9ab0f3be9595","domain":"accounts.zoho.com","path":"/","expires":-1,"httpOnly":true,"secure":true,"sameSite":"Lax"},{"name":"stk","value":"8a2b759d26594876ab7a96dff9bfc150","domain":"accounts.zoho.com","path":"/","expires":-1,"httpOnly":true,"secure":true,"sameSite":"Lax"},{"name":"__Secure-iamsdt","value":"0.EnQSMNesJ1wDwkSaaA-3trBK_m1sJCErnCiZx0ZUETBY9VTP0FXG1XZeS4YJLnZxLSJHQBpALtfiHLFMub0qb_FbxBSNh5DtUo8CykTNy6Bz85NDgUIZ0s-jXrnQjV-N8_ZZX5GhWmMV10WZbNEqeSgWYmqrACDmoKXp5p3Lw0E","domain":".zoho.com","path":"/","expires":1777537492.424325,"httpOnly":true,"secure":true,"sameSite":"None"},{"name":"_iamadt","value":"d7ac275c03c2449a680fb7b6b04afe6d6c24212b9c2899c74654113058f554cfd055c6d5765e4b86092e76712d224740","domain":".zoho.com","path":"/","expires":1777537492.424409,"httpOnly":true,"secure":true,"sameSite":"None"},{"name":"_iambdt","value":"2ed7e21cb14cb9bd2a6ff15bc4148d8790ed528f02ca44cdcba073f39343814219d2cfa35eb9d08d5f8df3f6595f91a15a6315d745996cd12a792816626aab00","domain":".zoho.com","path":"/","expires":1777537492.42447,"httpOnly":true,"secure":true,"sameSite":"None"},{"name":"_z_identity","value":"true","domain":"accounts.zoho.com","path":"/","expires":1774520692.424515,"httpOnly":false,"secure":true,"sameSite":"None"},{"name":"iamcsr","value":"05c3f334a35a774e553fb897a4de1ad66b6d9f8b73d3aec6bdbb104e5f4e116960a4ecde6df3a148dd1dbe8f14ddebfde2af1997df119d854500afe7635b93bd","domain":"accounts.zoho.com","path":"/","expires":-1,"httpOnly":false,"secure":true,"sameSite":"Strict"},{"name":"JSESSIONID","value":"71C05E6131EDF8F5EC5E682265AA0EBA","domain":"accounts.zoho.com","path":"/","expires":-1,"httpOnly":true,"secure":true,"sameSite":"Lax"},{"name":"zalb_c57526c03c","value":"12b554105fa89b70002b25b1e9cb67fe","domain":"profile.zoho.com","path":"/","expires":-1,"httpOnly":true,"secure":true,"sameSite":"Lax"},{"name":"concsr","value":"4876dfc450cdb98d20a043d0bcd1de61e4d804437a242e8d7e8dd42236d124b0c03db057dea90aaeffaeb5c7c3c29e5712835189b5e93dd2dd416a4645301510","domain":"profile.zoho.com","path":"/","expires":-1,"httpOnly":false,"secure":true,"sameSite":"Strict"},{"name":"wms-tkp-token","value":"717354382-5ccad54e-357daa02d37cdb7ec3ce192e0068a71e","domain":".zoho.com","path":"/","expires":-1,"httpOnly":true,"secure":true,"sameSite":"None"},{"name":"zalb_ad62b78f7f","value":"10df355d2ef5b610bbb8f492c792787a","domain":"mail.zoho.com","path":"/","expires":-1,"httpOnly":true,"secure":true,"sameSite":"Lax"},{"name":"zmcsr","value":"d534b49a074390cd10475a72dddb60aba9a6812f303a829a8fc1c2de242418655535aeb5b1785d514f6dfea72d51c5730eb0fc921547f7cca19eb053674fbb81","domain":"mail.zoho.com","path":"/","expires":-1,"httpOnly":false,"secure":true,"sameSite":"None"},{"name":"_zcsr_tmp","value":"d534b49a074390cd10475a72dddb60aba9a6812f303a829a8fc1c2de242418655535aeb5b1785d514f6dfea72d51c5730eb0fc921547f7cca19eb053674fbb81","domain":"mail.zoho.com","path":"/","expires":-1,"httpOnly":false,"secure":true,"sameSite":"Strict"},{"name":"JSESSIONID","value":"ECE0727EF232BAA33D603DE0D98D69F4","domain":"mail.zoho.com","path":"/","expires":-1,"httpOnly":true,"secure":true,"sameSite":"Lax"},{"name":"zmirc","value":"-1","domain":"mail.zoho.com","path":"/","expires":1774599895.144335,"httpOnly":true,"secure":true,"sameSite":"Strict"}],"origins":[]}}
+{
+  "cookies": [
+    {
+      "name": "_zxor",
+      "value": "\"https://accounts.zoho.com\"",
+      "domain": "accounts.zoho.com",
+      "path": "/wms",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "zmuac",
+      "value": "NzE3MzU0MzgyXzI0NjExNTI=",
+      "domain": "mail.zoho.com",
+      "path": "/biz",
+      "expires": 1779425168.002534,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "zmcdn",
+      "value": "MTg0LjgyLjEyMi44Mjo6VEg=",
+      "domain": "mail.zoho.com",
+      "path": "/biz",
+      "expires": 1776919568.002561,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "zalb_e188bc05fe",
+      "value": "20eadb21cd15397a42266d8a1680cec9",
+      "domain": "accounts.zoho.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "stk",
+      "value": "ef691fed0bce3f83e85efccb259a1426",
+      "domain": "accounts.zoho.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__Secure-iamsdt",
+      "value": "0.EnQSMA4dUKndHSSx0g_Dx6Os8jL6Tmd7Iykuf5UmMewBB705juZbOFw0TcOrC0EKAHBCRhpAzFj9IdDMA-LBqLHl2So1OTJclwYzJZRRJgcFDTv-PvZquBSS5xRsZcdRULQ40nSIW2AWv78LozEUqqzzWVaWjSDhrPiiqIHCtL0B",
+      "domain": ".zoho.com",
+      "path": "/",
+      "expires": 1779857160.311111,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_iamadt",
+      "value": "0e1d50a9dd1d24b1d20fc3c7a3acf232fa4e677b23292e7f952631ec0107bd398ee65b385c344dc3ab0b410a00704246",
+      "domain": ".zoho.com",
+      "path": "/",
+      "expires": 1779857160.311161,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_iambdt",
+      "value": "cc58fd21d0cc03e2c1a8b1e5d92a3539325c9706332594512607050d3bfe3ef66ab81492e7146c65c75150b438d274885b6016bfbf0ba33114aaacf35956968d",
+      "domain": ".zoho.com",
+      "path": "/",
+      "expires": 1779857160.31118,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "IAMSATCK_717354382",
+      "value": "eyJraWQiOiJhY2NvdW50cy5lYXIuc2VjcmV0LmxhYmVsIiwiZW5jIjoiQTI1NkNCQyIsImFsZyI6ImRpciJ9...MTdkODA3NjNjYjMxNGQ2NjcyNjg3ZTM1ZDBmNzU2NGFiODc5MTY1ZDk2YTM0MjE2Nzg3NDhhNjg2ZTJhZjU3YWMwODE2ODc0ZWY4ZjQ1NDlhM2Q5ZDg5N2U4NDFjZjljYzFhZDZjYzAwOWEyMmVkMjIyZjJhYTYzN2NkZmU5ZTY5ZWVjOGM5MDAwZGYwYjliZDExOTg1YjFmZjM2ODAwMA.",
+      "domain": "accounts.zoho.com",
+      "path": "/",
+      "expires": 1784609160.311198,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_z_identity",
+      "value": "true",
+      "domain": "accounts.zoho.com",
+      "path": "/",
+      "expires": 1776840360.311218,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "iamcsr",
+      "value": "f986948592605d485ad4bf25c33155a283013871f470b12a42b7fbde0a0273a33ba7b8b0697c5f2f8af430af2cae9b5a88e178b721e99d40aae139900c40587e",
+      "domain": "accounts.zoho.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "JSESSIONID",
+      "value": "6131734A67F837BAC32E90B9159BDCA8",
+      "domain": "accounts.zoho.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "zalb_c57526c03c",
+      "value": "65e5c9930b107d5ae05788a5d9a46e0c",
+      "domain": "profile.zoho.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "concsr",
+      "value": "14f5289fbc79f422d3c2ce2b4ce4f25a96f31f10e863f7a9b35e5eea83c3c8c0ca3e472c1d5a393c89af3a42bdf76c0214c10f4a30e44d73521e49bb1beff9f8",
+      "domain": "profile.zoho.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "wms-tkp-token",
+      "value": "717354382-271fbebd-5c659f24e1600d04323d827b49166503",
+      "domain": ".zoho.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "zalb_ad62b78f7f",
+      "value": "f77d659b2d1f0e491a7f3bf11b3322a6",
+      "domain": "mail.zoho.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "zmcsr",
+      "value": "8a5c9c811c8cb65ba44a8d0037f31a50c0658f9d4bb99c55a33463821174232a38810fc367d8d82bf3369f3414fa01fc0729a717c51489b70b922bd92a0efe8e",
+      "domain": "mail.zoho.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_zcsr_tmp",
+      "value": "8a5c9c811c8cb65ba44a8d0037f31a50c0658f9d4bb99c55a33463821174232a38810fc367d8d82bf3369f3414fa01fc0729a717c51489b70b922bd92a0efe8e",
+      "domain": "mail.zoho.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "JSESSIONID",
+      "value": "2D62181795D19C102545006796119703",
+      "domain": "mail.zoho.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "zmirc",
+      "value": "-1",
+      "domain": "mail.zoho.com",
+      "path": "/",
+      "expires": 1776919568.002548,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Strict"
+    }
+  ],
+  "origins": []
+}

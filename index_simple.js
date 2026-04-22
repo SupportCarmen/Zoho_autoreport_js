@@ -9,10 +9,23 @@ const {
 } = require("./config");
 const { sendToDiscord } = require("./discord");
 
+const SESSION_FILE = path.join(__dirname, "session.json");
+
+function loadSessionState() {
+  if (!fs.existsSync(SESSION_FILE)) return null;
+  try {
+    const data = JSON.parse(fs.readFileSync(SESSION_FILE, "utf8"));
+    if (data.state) return data.state; // wrapped format from index.js
+    return data; // raw format from generate_session.js
+  } catch (e) {
+    console.log("⚠️ Failed to parse session.json:", e.message);
+    return null;
+  }
+}
+
 (async () => {
   let browser;
   try {
-    // ตรวจสอบ Environment Variables
     console.log("🔍 Checking environment variables...");
     console.log(`  ZOHO_EMAIL: ${ZOHO_EMAIL ? "✅ SET" : "❌ MISSING"}`);
     console.log(`  ZOHO_PASSWORD: ${ZOHO_PASSWORD ? "✅ SET" : "❌ MISSING"}`);
@@ -32,64 +45,103 @@ const { sendToDiscord } = require("./discord");
 
     console.log("🚀 Starting Playwright...");
     browser = await chromium.launch({ headless: false });
-    const context = await browser.newContext({
-      viewport: { width: 1920, height: 1080 },
-      userAgent:
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
-    });
 
-    const page = await context.newPage();
+    let context;
+    let page;
+    let isSessionLogin = false;
+    const sessionState = loadSessionState();
 
-    // ===== Login =====
-    console.log("🔑 Logging in...");
-    await page.goto("https://accounts.zoho.com/signin", { timeout: 60000 });
-    await page.waitForTimeout(3000);
+    if (sessionState) {
+      console.log("🔐 Session found, trying session login...");
+      context = await browser.newContext({
+        viewport: { width: 1920, height: 1080 },
+        userAgent:
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+        storageState: sessionState,
+      });
+      page = await context.newPage();
 
-    // กรอก Email
-    console.log("📧 Entering email...");
-    await page.fill("#login_id", ZOHO_EMAIL);
-    await page.click("#nextbtn");
-    await page.waitForTimeout(3000);
+      await page.goto(DASHBOARD_URL, {
+        waitUntil: "networkidle",
+        timeout: 60000,
+      });
+      await page.waitForTimeout(6000);
 
-    // กรอก Password
-    console.log("🔐 Entering password...");
-    await page.waitForSelector("#password", { timeout: 20000 });
-    await page.fill("#password", ZOHO_PASSWORD);
-    await page.click("#nextbtn");
-    await page.waitForLoadState("networkidle");
-    await page.waitForTimeout(6000);
-    console.log("✅ Login success");
+      const currentUrl = page.url();
+      console.log("🔍 Debug: current URL =", currentUrl);
 
-    // Debug: ถ่ายภาพหน้าจอหลัง Login
+      if (!currentUrl.includes("accounts.zoho.com/signin")) {
+        console.log("✅ Session login success, skip password");
+        isSessionLogin = true;
+      } else {
+        console.log(
+          "⚠️ Session expired or invalid, falling back to password login...",
+        );
+        await page.close();
+        await context.close();
+      }
+    }
+
+    if (!isSessionLogin) {
+      console.log("🔑 Logging in with password...");
+      context = await browser.newContext({
+        viewport: { width: 1920, height: 1080 },
+        userAgent:
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      });
+      page = await context.newPage();
+
+      await page.goto("https://accounts.zoho.com/signin", { timeout: 60000 });
+      await page.waitForTimeout(3000);
+
+      console.log("📧 Entering email...");
+      await page.fill("#login_id", ZOHO_EMAIL);
+      await page.click("#nextbtn");
+      await page.waitForTimeout(3000);
+
+      console.log("🔐 Entering password...");
+      await page.waitForSelector("#password", { timeout: 20000 });
+      await page.fill("#password", ZOHO_PASSWORD);
+      await page.click("#nextbtn");
+      await page.waitForLoadState("networkidle");
+      await page.waitForTimeout(6000);
+
+      const currentUrl = page.url();
+      console.log("🔍 Debug: current URL =", currentUrl);
+
+      if (currentUrl.includes("accounts.zoho.com")) {
+        const debugOtp = path.join(FOLDER, `debug_otp_challenge_${now}.png`);
+        await page.screenshot({ path: debugOtp, fullPage: true });
+        console.log("⚠️ Still on login page — OTP/CAPTCHA may be required");
+        await sendToDiscord([debugOtp], now);
+        throw new Error(
+          "Login failed: Zoho asked for OTP or extra verification. Update your ZOHO_SESSION_BASE64 secret.",
+        );
+      }
+
+      console.log("✅ Password login success");
+    }
+
     const debugLogin = path.join(FOLDER, `debug_after_login_${now}.png`);
     await page.screenshot({ path: debugLogin, fullPage: true });
     console.log("🔍 Debug: saved after-login screenshot");
-    console.log("🔍 Debug: current URL =", page.url());
 
-    // เช็คว่า Login สำเร็จหรือไม่
-    // if (page.url().includes("accounts.zoho.com")) {
-    //   console.log("⚠️ ยังอยู่หน้า Login — อาจต้องใส่ OTP หรือ Password ผิด");
-    //   console.log("🔍 Debug: Page title =", await page.title());
-    //   await sendToDiscord([debugLogin], now);
-    //   await browser.close();
-    //   process.exit(1);
-    // }
+    if (!isSessionLogin) {
+      console.log("📊 Opening Dashboard...");
+      await page.goto(DASHBOARD_URL, {
+        waitUntil: "networkidle",
+        timeout: 60000,
+      });
+      await page.waitForTimeout(15000);
+    } else {
+      await page.waitForTimeout(9000);
+    }
 
-    // ===== เปิด Dashboard =====
-    console.log("📊 Opening Dashboard...");
-    await page.goto(DASHBOARD_URL, {
-      waitUntil: "networkidle",
-      timeout: 60000,
-    });
-    await page.waitForTimeout(15000); // รอ Dashboard โหลดกราฟให้เสร็จ
-
-    // Debug: ถ่ายภาพหน้าจอ Dashboard
     const debugDash = path.join(FOLDER, `debug_dashboard_${now}.png`);
     await page.screenshot({ path: debugDash, fullPage: true });
     console.log("🔍 Debug: saved dashboard screenshot");
     console.log("🔍 Debug: current URL =", page.url());
 
-    // ===== Capture =====
     console.log("📸 Capturing...");
     const images = [];
     const selector = ".zd_v2-dashboarddetailcontainer-container";
@@ -102,16 +154,13 @@ const { sendToDiscord } = require("./discord");
       await page.locator(selector).screenshot({ path: file });
       images.push(file);
     } else {
-      // Fallback: ถ่ายเต็มหน้าจอแทน
       console.log("⚠️ Selector not found, using full page screenshot...");
       const file = path.join(FOLDER, `dashboard_full_${now}.png`);
       await page.screenshot({ path: file, fullPage: true });
       images.push(file);
     }
 
-    // ===== ส่ง Discord =====
     console.log("📤 Sending to Discord...");
-    
     await sendToDiscord([debugLogin, debugDash, ...images], now);
 
     await browser.close();
