@@ -143,19 +143,25 @@ function loadSessionState() {
     console.log("🔍 Debug: current URL =", page.url());
 
     console.log("📸 Capturing...");
-    const selector = ".zd_v2-dashboarddetailcontainer-container";
     const images = [];
-    const scrollSteps = [0, 300, 400, 1200];
 
-    for (let i = 0; i < 4; i++) {
-      if (scrollSteps[i] > 0) {
-        await page.mouse.wheel(0, scrollSteps[i]);
-        await page.waitForTimeout(2000);
-      }
-      const file = path.join(FOLDER, `${now}_dashboard_${i + 1}.png`);
-      await page.locator(selector).screenshot({ path: file });
+    // ถ่าย full page รูปเดียว (ครบทั้งหน้า)
+    const fullPageFile = path.join(FOLDER, `dashboard_full_${now}.png`);
+    await page.screenshot({ path: fullPageFile, fullPage: true });
+    images.push(fullPageFile);
+    console.log("✅ full page capture done");
+
+    // เลื่อนลง + ถ่าย viewport ทีละช่วง (รูปไม่ซ้ำกัน)
+    const scrollPositions = [0, 800, 1600, 2400];
+    for (let i = 0; i < scrollPositions.length; i++) {
+      const y = scrollPositions[i];
+      await page.evaluate((pos) => window.scrollTo(0, pos), y);
+      await page.waitForTimeout(2000);
+
+      const file = path.join(FOLDER, `dashboard_scroll_${i + 1}_${now}.png`);
+      await page.screenshot({ path: file, fullPage: false });
       images.push(file);
-      console.log(`✅ capture ${i + 1}/4`);
+      console.log(`✅ capture ${i + 1}/${scrollPositions.length} at Y=${y}`);
     }
 
     console.log("📤 Sending to Discord...");
