@@ -143,23 +143,9 @@ function loadSessionState() {
     console.log("🔍 Debug: saved dashboard screenshot");
     console.log("🔍 Debug: current URL =", page.url());
 
-    // ===== ปิด popup / notification / modal ก่อน capture =====
     try {
-      const notNow = page.locator("text=Not Now");
-      if ((await notNow.count()) > 0) {
-        await notNow.click();
-        await page.waitForTimeout(500);
-      }
-    } catch (e) {}
-
-    try {
-      await page.keyboard.press("Escape");
-      await page.waitForTimeout(500);
-    } catch (e) {}
-
-    try {
-      await page.mouse.click(10, 10);
-      await page.waitForTimeout(300);
+      const btn = page.locator("text=Not Now");
+      if ((await btn.count()) > 0) await btn.click();
     } catch (e) {}
 
     console.log("\n📸 เริ่ม capture dashboard...");
