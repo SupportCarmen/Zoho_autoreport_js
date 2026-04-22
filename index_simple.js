@@ -150,33 +150,18 @@ function loadSessionState() {
 
     console.log("\n📸 เริ่ม capture dashboard...");
     const selector = ".zd_v2-dashboarddetailcontainer-container";
-    const dashboard = page.locator(selector);
     const images = [];
-    const scrollPositions = [0, 1200];
+    const scrollSteps = [0, 1200];
 
-    for (let i = 0; i < scrollPositions.length; i++) {
-      const targetY = scrollPositions[i];
-
-      // Scroll ที่ dashboard container โดยตรง
-      await dashboard.evaluate((el, pos) => {
-        el.scrollTop = pos;
-        let p = el.parentElement;
-        while (p) {
-          p.scrollTop = pos;
-          p = p.parentElement;
-        }
-      }, targetY);
-
-      await page.waitForTimeout(2000);
-
-      const finalY = await dashboard.evaluate((el) => el.scrollTop);
-      console.log(`🔍 Scroll target: ${targetY}, container scrollTop: ${finalY}`);
-
-      // ถ่าย viewport (ส่วนที่เห็นบนจอ) ไม่ใช่ element ทั้งก้อน
-      const file = path.join(FOLDER, `dashboard_${i + 1}_${now}.png`);
-      await page.screenshot({ path: file, fullPage: false });
+    for (let i = 0; i < 2; i++) {
+      if (scrollSteps[i] > 0) {
+        await page.mouse.wheel(0, scrollSteps[i]);
+        await page.waitForTimeout(2000);
+      }
+      const file = path.join(FOLDER, `${now}_dashboard_${i + 1}.png`);
+      await page.locator(selector).screenshot({ path: file });
       images.push(file);
-      console.log(`✅ capture ${i + 1}/${scrollPositions.length}`);
+      console.log(`✅ capture ${i + 1}/2`);
     }
 
     console.log("📤 Sending to Discord...");
