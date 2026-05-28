@@ -6,9 +6,18 @@ module.exports = {
   WEBHOOK: process.env.DISCORD_WEBHOOK,
   ZOHO_EMAIL: process.env.ZOHO_EMAIL,
   ZOHO_PASSWORD: process.env.ZOHO_PASSWORD,
+  
+  // Zoho API Credentials
+  ZOHO_CLIENT_ID: process.env.ZOHO_CLIENT_ID,
+  ZOHO_CLIENT_SECRET: process.env.ZOHO_CLIENT_SECRET,
+  ZOHO_REFRESH_TOKEN: process.env.ZOHO_REFRESH_TOKEN,
+
   DASHBOARD_URL: "https://desk.zoho.com/agent/carmensoftware/carmen-software-support/dashboards/details/483929000025299144",
   // เปลี่ยน Folder มาไว้ในโปรเจกต์เพื่อให้ GitHub Actions จัดการง่าย
   FOLDER: path.join(__dirname, 'screenshots'),
   REPORT_FOLDER: path.join(__dirname, 'reports'),
-  REPORTS: [] // ตัดออกเพราะไม่ใช้ส่วนของ Excel ใน GitHub Actions
+  REPORTS: [
+    // { name: 'OpenAll', url: 'https://desk.zoho.com/api/v2/reports/.../export?format=xls' },
+    // { name: 'TicketToday', url: 'https://desk.zoho.com/api/v2/reports/.../export?format=xls' }
+  ]
 };

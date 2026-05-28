@@ -47,10 +47,24 @@ A Node.js automation tool that captures Zoho Desk dashboards, downloads reports,
     ```
 3.  **Environment Variables:** Create a `.env` file in the root directory:
     ```env
+    # Browser Login (for Screenshots)
     ZOHO_EMAIL=your_email@example.com
     ZOHO_PASSWORD=your_password
+    
+    # API Login (for Reports)
+    ZOHO_CLIENT_ID=your_client_id
+    ZOHO_CLIENT_SECRET=your_client_secret
+    ZOHO_REFRESH_TOKEN=your_refresh_token
+    
+    # Discord
+    DISCORD_WEBHOOK=your_webhook_url
     ```
-4.  **Discord Webhook:** The webhook URL is currently hardcoded in `config.js`. Update it there if necessary.
+4.  **Generate Refresh Token:**
+    If you have Client ID and Secret but no Refresh Token:
+    ```bash
+    node scripts/get_refresh_token.js
+    ```
+    Follow the instructions to get your `ZOHO_REFRESH_TOKEN`.
 
 ### Execution
 Run the reporter:
@@ -58,15 +72,12 @@ Run the reporter:
 npm start
 ```
 
-## Development Conventions
+## Architecture Notes
 
-*   **Timezone:** All timestamps are formatted for `Asia/Bangkok`.
-*   **File Storage:**
-    *   Screenshots: `~/Downloads/captureReport`
-    *   Raw Reports: `~/Downloads/report`
-    *   Master Files: `~/Downloads/All`
-*   **Excel Manipulation:** Standard data cleaning is done in Node.js, but any visual or structural changes (like PivotTables) are delegated to VBScript to leverage native Excel capabilities.
-*   **Session Management:** Uses Playwright's `storageState` to persist login cookies for 24 hours.
+*   **Hybrid Authentication:**
+    *   **API (OAuth 2.0)**: Used for downloading reports. This is more stable and avoids MFA/Captcha issues.
+    *   **Browser (Playwright)**: Used for capturing dashboard screenshots. Still requires a web session (cookies).
+*   **Session Management:** Uses Playwright's `storageState` to persist login cookies. If the API is configured, reports are downloaded first, then Playwright handles the screenshots.
 
 ## Key Files
 
