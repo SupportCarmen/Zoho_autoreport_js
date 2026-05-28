@@ -222,6 +222,19 @@ function loadSessionState() {
       );
 
     console.error("❌ Fatal Error:", safeMessage);
+    
+    // --- New: Send Error to Discord ---
+    try {
+      const { axios } = require("axios"); // Ensure axios is available or use existing if any
+      const axiosLib = require("axios");
+      await axiosLib.post(WEBHOOK, {
+        content: `❌ **Zoho Reporter Error!**\n**Time:** ${new Date().toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' })}\n**Message:** \`\`\`${safeMessage.substring(0, 1500)}\`\`\``
+      });
+      console.log("✅ Error notification sent to Discord");
+    } catch (discordError) {
+      console.error("❌ Failed to send error to Discord:", discordError.message);
+    }
+
     if (process.env.NODE_ENV === "development") {
       console.error(error.stack);
     }
