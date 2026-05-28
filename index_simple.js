@@ -4,11 +4,18 @@ const path = require("path");
 const {
   ZOHO_EMAIL,
   ZOHO_PASSWORD,
+  ZOHO_CLIENT_ID,
+  ZOHO_CLIENT_SECRET,
+  ZOHO_REFRESH_TOKEN,
   DASHBOARD_URL,
   FOLDER,
+  REPORT_FOLDER,
+  REPORTS,
   WEBHOOK,
 } = require("./config");
 const { sendToDiscord } = require("./discord");
+const { getAccessToken, downloadFile } = require("./lib/zoho_api");
+const { updateMaster } = require("./excel");
 
 const SESSION_FILE = path.join(__dirname, "session.json");
 
@@ -38,14 +45,48 @@ function loadSessionState() {
     }
 
     if (!fs.existsSync(FOLDER)) fs.mkdirSync(FOLDER, { recursive: true });
+    if (!fs.existsSync(REPORT_FOLDER)) fs.mkdirSync(REPORT_FOLDER, { recursive: true });
 
     const now = new Date()
       .toLocaleString("sv-SE", { timeZone: "Asia/Bangkok" })
       .replace(" ", "_")
       .replace(/:/g, "-");
 
+    // --- Step 1: API Report Downloads ---
+    let accessToken = null;
+    const useApiForReports = ZOHO_CLIENT_ID && ZOHO_CLIENT_SECRET && ZOHO_REFRESH_TOKEN;
+    const reportEntries = [];
+
+    if (useApiForReports) {
+      console.log("🔐 Requesting Access Token via API...");
+      try {
+        accessToken = await getAccessToken({
+          clientId: ZOHO_CLIENT_ID,
+          clientSecret: ZOHO_CLIENT_SECRET,
+          refreshToken: ZOHO_REFRESH_TOKEN
+        });
+        console.log("✅ API Access Token acquired");
+      } catch (e) {
+        console.log("⚠️ API Token request failed, will try browser fallback if needed");
+      }
+    }
+
+    if (accessToken && REPORTS && REPORTS.length > 0) {
+      console.log("\n📥 Downloading reports via API...");
+      for (const { url, name } of REPORTS) {
+        const file = path.join(REPORT_FOLDER, `${name}_${now}.xls`);
+        try {
+          await downloadFile(url, accessToken, file);
+          reportEntries.push({ file, name });
+          console.log(`✅ ${name} downloaded via API`);
+        } catch (e) {
+          console.log(`❌ ${name} API download failed: ${e.message}`);
+        }
+      }
+    }
+
     console.log("🚀 Starting Playwright...");
-    browser = await chromium.launch({ headless: false });
+    browser = await chromium.launch({ headless: true });
 
     let context;
     let page;
