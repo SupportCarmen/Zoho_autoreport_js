@@ -1,13 +1,12 @@
-const fs = require('fs');
-const axios = require('axios');
-const FormData = require('form-data');
-const { WEBHOOK } = require('./config');
+const fs = require("fs");
+const axios = require("axios");
+const FormData = require("form-data");
+const { WEBHOOK } = require("./config");
 
 async function sendToDiscord(files, now) {
-  const day = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+  const day = new Date().toLocaleDateString("en-US", { weekday: "long" });
 
-  const message =
-`📊Dashboards_Tickets
+  const message = `📊Dashboards_Tickets
 🕒${day} ${now}
 @everyone`;
 
@@ -22,9 +21,10 @@ async function sendToDiscord(files, now) {
     console.log("Sent to Discord");
   } catch (error) {
     // Mask webhook URL to prevent leaking it in logs
-    const safeMessage = error.message?.replace(WEBHOOK, '[REDACTED_WEBHOOK]') || error.message;
-    console.error('❌ Failed to send Discord:', safeMessage);
-    throw new Error('Discord webhook failed: ' + safeMessage);
+    const safeMessage =
+      error.message?.replace(WEBHOOK, "[REDACTED_WEBHOOK]") || error.message;
+    console.error("❌ Failed to send Discord:", safeMessage);
+    throw new Error("Discord webhook failed: " + safeMessage);
   }
 }
 
