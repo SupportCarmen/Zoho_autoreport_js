@@ -5,9 +5,8 @@ on:
   #   branches:
   #     - dev
   schedule:
-    # ตั้งเวลาให้รัน 17:50 ไทย (จันทร์ - ศุกร์)
-    - cron: '50 16 * * 1-5'
-      timezone: Asia/Bangkok
+    # 17:00 Thailand = 10:00 UTC
+    - cron: '0 10 * * 1-5'
   workflow_dispatch: # กดรันเองได้ด้วยมือ
 
 jobs:
