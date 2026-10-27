@@ -5,8 +5,8 @@ on:
   #   branches:
   #     - dev
   schedule:
-    # 17:00 Thailand = 10:00 UTC
-    - cron: '0 10 * * 1-5'
+    - cron: '7 17 * * 1-5'
+      timezone: 'Asia/Bangkok'
   workflow_dispatch: # กดรันเองได้ด้วยมือ
 
 jobs:
